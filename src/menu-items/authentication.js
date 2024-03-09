@@ -25,8 +25,7 @@ const authentication = {
           id: 'login3',
           title: 'Đăng nhập',
           type: 'item',
-          url: '/pages/login/login3',
-          target: true
+          url: '/pages/login/login3'
         }
       ]
     }

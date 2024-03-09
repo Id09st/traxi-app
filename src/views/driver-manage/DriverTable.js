@@ -45,7 +45,7 @@ function DriverTable() {
   }, [selectedDriverId]);
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 320 },
+    // { field: 'id', headerName: 'ID', width: 320 },
     { field: 'fullname', headerName: 'Tên', width: 180 },
     {
       field: 'imageurl',
@@ -160,7 +160,7 @@ function DriverTable() {
           </Grid>
           <Grid item>
             <Button variant="contained" startIcon={<AddIcon />} onClick={toggleDrawer(true)}>
-              Thêm Driver
+              Xét Duyệt hồ sơ Driver
             </Button>
           </Grid>
         </Grid>

@@ -11,7 +11,7 @@ import { getAllManager } from 'api/manager';
 
 function ManagerTable() {
   const columns = [
-    { field: 'id', headerName: 'ID', width: 400 },
+    // { field: 'id', headerName: 'ID', width: 400 },
     { field: 'name', headerName: 'Tên', width: 350 },
     { field: 'role', headerName: 'Vai trò', width: 300 },
     {
@@ -118,7 +118,7 @@ function ManagerTable() {
       console.error('Error fetching managers:', error);
     }
   };
-  
+
 
   useEffect(() => {
     const filteredManagers = managers.filter((manager) =>

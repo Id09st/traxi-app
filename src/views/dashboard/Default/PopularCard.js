@@ -43,7 +43,7 @@ const PopularCard = ({ isLoading }) => {
               <Grid item xs={12}>
                 <Grid container alignContent="center" justifyContent="space-between">
                   <Grid item>
-                    <Typography variant="h4">Cổ phiếu phổ biến</Typography>
+                    <Typography variant="h4">Xếp hạng tài xế</Typography>
                   </Grid>
                   <Grid item>
                     <MoreHorizOutlinedIcon
@@ -88,7 +88,7 @@ const PopularCard = ({ isLoading }) => {
                     <Grid container alignItems="center" justifyContent="space-between">
                       <Grid item>
                         <Typography variant="subtitle1" color="inherit">
-                          Bajaj Finery
+                          Nguyễn Văn Ride
                         </Typography>
                       </Grid>
                       <Grid item>
@@ -129,7 +129,7 @@ const PopularCard = ({ isLoading }) => {
                     <Grid container alignItems="center" justifyContent="space-between">
                       <Grid item>
                         <Typography variant="subtitle1" color="inherit">
-                          TTML
+                          Lê Chí Xế
                         </Typography>
                       </Grid>
                       <Grid item>
@@ -170,14 +170,14 @@ const PopularCard = ({ isLoading }) => {
                     <Grid container alignItems="center" justifyContent="space-between">
                       <Grid item>
                         <Typography variant="subtitle1" color="inherit">
-                          Reliance
+                          Huỳnh Văn Đơ
                         </Typography>
                       </Grid>
                       <Grid item>
                         <Grid container alignItems="center" justifyContent="space-between">
                           <Grid item>
                             <Typography variant="subtitle1" color="inherit">
-                              $200.00
+                              2.000.000₫
                             </Typography>
                           </Grid>
                           <Grid item>
@@ -211,14 +211,14 @@ const PopularCard = ({ isLoading }) => {
                     <Grid container alignItems="center" justifyContent="space-between">
                       <Grid item>
                         <Typography variant="subtitle1" color="inherit">
-                          TTML
+                          Cao Chí Tài
                         </Typography>
                       </Grid>
                       <Grid item>
                         <Grid container alignItems="center" justifyContent="space-between">
                           <Grid item>
                             <Typography variant="subtitle1" color="inherit">
-                              $189.00
+                              189.000₫
                             </Typography>
                           </Grid>
                           <Grid item>
@@ -252,14 +252,14 @@ const PopularCard = ({ isLoading }) => {
                     <Grid container alignItems="center" justifyContent="space-between">
                       <Grid item>
                         <Typography variant="subtitle1" color="inherit">
-                          Stolon
+                          Nguyễn Cao Xi
                         </Typography>
                       </Grid>
                       <Grid item>
                         <Grid container alignItems="center" justifyContent="space-between">
                           <Grid item>
                             <Typography variant="subtitle1" color="inherit">
-                              $189.00
+                              189.000₫
                             </Typography>
                           </Grid>
                           <Grid item>
