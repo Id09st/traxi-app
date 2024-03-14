@@ -44,7 +44,7 @@ export default function ManagerForm({ setIsOpen }) {
         });
     }
   };
-  
+
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -75,7 +75,7 @@ export default function ManagerForm({ setIsOpen }) {
             <TextField
               error={errors.name}
               id="outlined-name"
-              label="Name"
+              label="Tên tài khoản"
               value={manager.name}
               onChange={handleChange('name')}
               helperText={errors.name ? 'Tên phải chứa cả chữ và số' : ''}
@@ -86,7 +86,7 @@ export default function ManagerForm({ setIsOpen }) {
             <TextField
               error={errors.password}
               id="outlined-password"
-              label="Password"
+              label="Mật khẩu"
               value={manager.password}
               onChange={handleChange('password')}
               type={showPassword ? 'text' : 'password'}
@@ -105,7 +105,7 @@ export default function ManagerForm({ setIsOpen }) {
           </Grid>
         </Grid>
         <Button type="submit" color="primary" variant="contained" style={{ marginTop: '20px' }}>
-          Create Manager
+          Thêm
         </Button>
       </Box>
       <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>

@@ -20,7 +20,6 @@ const initialState = {
 
 const JWTReducer = (state, action) => {
   switch (action.type) {
-    case 'INITIALIZE':
     case 'LOGIN':
       return {
         ...state,
@@ -54,37 +53,26 @@ function AuthProvider({ children }) {
         const userRaw = getUserInfo();
         if (token && isValidToken(token) && userRaw) {
           setSession(token);
-
-          // TODO: IMPLEMENT METHOD TO GET USER INFO FROM TOKEN
-          // const response = await axios.get('/api/account/my-account');
-          // const { user } = response.data;
-
           const user = JSON.parse(userRaw);
 
+          // Sử dụng action type 'LOGIN' để khôi phục trạng thái đăng nhập
           dispatch({
-            type: Types.Initial,
+            type: Types.Login,
             payload: {
-              isAuthenticated: true,
               user
             }
           });
         } else {
+          // Nếu không có token hợp lệ hoặc thông tin người dùng, đảm bảo rằng ứng dụng được đặt về trạng thái 'chưa đăng nhập'
           dispatch({
-            type: Types.Initial,
-            payload: {
-              isAuthenticated: false,
-              user: null
-            }
+            type: Types.Logout
           });
         }
       } catch (err) {
         console.error(err);
+        // Xử lý lỗi, ví dụ: thông báo lỗi hoặc đặt ứng dụng về trạng thái 'chưa đăng nhập'
         dispatch({
-          type: Types.Initial,
-          payload: {
-            isAuthenticated: false,
-            user: null
-          }
+          type: Types.Logout
         });
       }
     };

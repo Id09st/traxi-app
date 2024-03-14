@@ -3,7 +3,7 @@ import { axiosInstances } from 'utils/axios';
 export const getAllManager = async (currentPage, pageSize) => {
   try {
     const response = await axiosInstances.login.get(`/api/v1/all-manager/${currentPage}/${pageSize}`);
-    console.log('Dữ liệu nhận được:', response.data);
+
     const { result, error } = response.data;
     if (error) {
       console.error('Lỗi từ API:', error);
@@ -20,7 +20,7 @@ export const getAllManager = async (currentPage, pageSize) => {
 export const getManagerById = async (managerId) => {
   try {
     const response = await axiosInstances.login.get(`/api/v1/manager/${managerId}`);
-    console.log('Dữ liệu nhận được:', response.data);
+
     const { result, error } = response.data;
     if (error) {
       console.error('Lỗi từ API:', error);

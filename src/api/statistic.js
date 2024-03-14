@@ -4,7 +4,6 @@ export const getStatistic = () => {
   return axiosInstances.login
     .get(`/api/v1/statistic/income-driver`)
     .then((response) => {
-      console.log('Dữ liệu nhận được:', response.data);
       const { result, error } = response.data; // Sửa từ `statistics` thành `result`
       if (error) {
         console.error('Lỗi từ API:', error);
@@ -23,7 +22,6 @@ export const getStatisticDriver = () => {
   return axiosInstances.login
     .get(`/api/v1/statistic/driver`)
     .then((response) => {
-      console.log('Dữ liệu nhận được:', response.data);
       const { result, error } = response.data; // Sửa từ `statistics` thành `result`
       if (error) {
         console.error('Lỗi từ API:', error);
@@ -42,7 +40,6 @@ export const getStatisticReview = () => {
   return axiosInstances.login
     .get(`/api/v1/statistic/review`)
     .then((response) => {
-      console.log('Dữ liệu nhận được:', response.data);
       const { result, error } = response.data; // Sửa từ `statistics` thành `result`
       if (error) {
         console.error('Lỗi từ API:', error);

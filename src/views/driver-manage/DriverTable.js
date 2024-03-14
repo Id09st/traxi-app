@@ -1,25 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { TextField, InputAdornment, IconButton, CardContent, Grid, Typography, Box, Drawer, Button } from '@mui/material';
+import { TextField, InputAdornment, IconButton, CardContent, Grid, Drawer, Button, Tooltip } from '@mui/material';
 import MainCard from '../../ui-component/cards/MainCard';
-import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
+import InfoIcon from '@mui/icons-material/Info';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { getAllDriver } from 'api/driver';
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import DriverForm from './DriverForm';
-import DriverUpdate from './DriverUpdate'; // Thêm import cho DriverUpdate
+import DriverUpdate from './DriverUpdate';
 import useDriverForm from 'hooks/useDriverForm';
+import CircleIcon from '@mui/icons-material/Circle';
 
 function DriverTable() {
   const [reload, setReload] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [openDriverUpdate, setOpenDriverUpdate] = useState(false); // State để mở form DriverUpdate
-  const [selectedDriverId, setSelectedDriverId] = useState(null); // State để lưu ID của lái xe được chọn
+  const [openDriverUpdate, setOpenDriverUpdate] = useState(false);
+  const [selectedDriverId, setSelectedDriverId] = useState(null);
   const [drivers, setDrivers] = useState([]);
   const [searchText, setSearchText] = useState('');
-  const { driver, errors, handleChange, validate } = useDriverForm(); // Sử dụng custom hook
+  const { driver, errors, handleChange, validate } = useDriverForm();
   const [pagination, setPagination] = useState({
     currentPage: 1,
     pageSize: 80,
@@ -27,16 +29,14 @@ function DriverTable() {
     totalPages: 0
   });
   const AvatarCell = ({ value }) => (
-    <>
-      <Stack direction="row" spacing={2}>
-        <Avatar src={value} sx={{ width: 45, height: 45 }} />
-      </Stack>
-    </>
+    <Stack direction="row" spacing={2}>
+      <Avatar src={value} sx={{ width: 45, height: 45 }} />
+    </Stack>
   );
 
   useEffect(() => {
-    getDrivers(pagination.currentPage, pagination.pageSize);
-  }, [reload, pagination.currentPage, pagination.pageSize]);
+    getDrivers(pagination.currentPage, pagination.pageSize, searchText);
+  }, [reload, pagination.currentPage, pagination.pageSize, searchText]);
 
   useEffect(() => {
     if (selectedDriverId) {
@@ -45,7 +45,6 @@ function DriverTable() {
   }, [selectedDriverId]);
 
   const columns = [
-    // { field: 'id', headerName: 'ID', width: 320 },
     { field: 'fullname', headerName: 'Tên', width: 180 },
     {
       field: 'imageurl',
@@ -59,35 +58,32 @@ function DriverTable() {
     {
       field: 'status',
       headerName: 'Trạng thái',
-      width: 130,
+      width: 150,
+      headerAlign: 'center',
       renderCell: (params) => (
-        <div
-          style={{
-            height: '15px',
-            width: '15px',
-            backgroundColor: params.value ? 'green' : 'red',
-            borderRadius: '50%'
-          }}
-        />
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+          <CircleIcon style={{ color: params.value ? 'green' : 'red' }} />
+        </div>
       )
     },
     {
-      field: 'action',
-      headerName: 'Hành động',
       width: 130,
+      headerAlign: 'center',
       renderCell: (params) => (
-        <>
-          <IconButton
-            aria-label="RemoveRedEyeOutlinedIcon"
-            onClick={() => {
-              setOpenDriverUpdate(true); // Mở form DriverUpdate khi nhấp vào nút "RemoveRedEyeOutlinedIcon"
-              setSelectedDriverId(params.row.id); // Chọn lái xe dựa trên ID
-            }}
-            color="info"
-          >
-            <RemoveRedEyeOutlinedIcon />
-          </IconButton>
-        </>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+          <Tooltip title="Xem thông tin">
+            <IconButton
+              aria-label="RemoveRedEyeOutlinedIcon"
+              onClick={() => {
+                setOpenDriverUpdate(true);
+                setSelectedDriverId(params.row.id);
+              }}
+              color="info"
+            >
+              <InfoIcon />
+            </IconButton>
+          </Tooltip>
+        </div>
       ),
       sortable: false
     }
@@ -101,11 +97,28 @@ function DriverTable() {
   };
 
   const handlePageChange = (newPage) => {
-    console.log('NewPage', newPage);
-    getDrivers(newPage, pagination.pageSize);
+    getDrivers(newPage + 1, pagination.pageSize, searchText);
   };
 
-  const getDrivers = async (currentPage, pageSize) => {
+  // Trong DriverTable component
+
+  const updateDriverStatus = (driverId, newStatus) => {
+    setDrivers(
+      drivers.map((driver) => {
+        if (driver.id === driverId) {
+          return { ...driver, status: newStatus };
+        }
+        return driver;
+      })
+    );
+    // Đánh dấu để làm mới danh sách sau khi cập nhật
+    setReload((prev) => !prev);
+  };
+
+  // Khi render DriverUpdate component, truyền prop updateDriverStatus
+  <DriverUpdate driverId={selectedDriverId} onUpdateDriverStatus={updateDriverStatus} />;
+
+  const getDrivers = async (currentPage, pageSize, searchText = '') => {
     try {
       const listDrivers = await getAllDriver(currentPage, pageSize);
       if (listDrivers && listDrivers.pagination && listDrivers.data) {
@@ -116,18 +129,20 @@ function DriverTable() {
           totalRows: pagination.totalRows,
           totalPages: pagination.totalPages
         });
-        const transformedData = data.map((driver) => ({
-          id: driver.Id,
-          fullname: driver.FullName,
-          imageurl: driver.ImageUrl,
-          phone: driver.Phone,
-          address: driver.Address,
-          update: driver.UpDate,
-          degreeid: driver.DegreeId,
-          walletid: driver.WalletId,
-          status: driver.Status,
-          password: driver.Password
-        }));
+        const transformedData = data
+          .filter((driver) => driver.FullName.toLowerCase().includes(searchText.toLowerCase()))
+          .map((driver) => ({
+            id: driver.Id,
+            fullname: driver.FullName,
+            imageurl: driver.ImageUrl,
+            phone: driver.Phone,
+            address: driver.Address,
+            update: driver.UpDate,
+            degreeid: driver.DegreeId,
+            walletid: driver.WalletId,
+            status: driver.Status,
+            password: driver.Password
+          }));
         setDrivers(transformedData);
       }
     } catch (error) {
@@ -139,7 +154,7 @@ function DriverTable() {
     <MainCard title="Danh sách Driver" contentSX={{ p: 2 }}>
       <CardContent>
         <Grid container spacing={2} alignItems="center" justifyContent="space-between">
-          <Grid item>
+          <Grid item xs={12} sm={6}>
             <TextField
               variant="outlined"
               size="small"
@@ -147,6 +162,7 @@ function DriverTable() {
               margin="normal"
               placeholder="Tìm kiếm Driver theo tên"
               value={searchText}
+              style={{ paddingBottom: '10px' }}
               onChange={(e) => setSearchText(e.target.value)}
               InputProps={{
                 startAdornment: (
@@ -155,19 +171,20 @@ function DriverTable() {
                   </InputAdornment>
                 )
               }}
-              sx={{ width: '300px' }}
             />
           </Grid>
           <Grid item>
-            <Button variant="contained" startIcon={<AddIcon />} onClick={toggleDrawer(true)}>
-              Xét Duyệt hồ sơ Driver
-            </Button>
+            <Tooltip title="Thêm Driver mới">
+              <Button variant="contained" startIcon={<AddIcon />} onClick={toggleDrawer(true)}>
+                Xét Duyệt hồ sơ Driver
+              </Button>
+            </Tooltip>
           </Grid>
         </Grid>
         <Drawer
           anchor="right"
-          open={isOpen}
-          onClose={() => setIsOpen(false)}
+          open={openDriverUpdate}
+          onClose={() => setOpenDriverUpdate(false)}
           sx={{
             width: 500,
             margin: 0,
@@ -181,9 +198,8 @@ function DriverTable() {
             }
           }}
         >
-          <DriverForm setIsOpen={setIsOpen} setReload={setReload} />
+          <DriverUpdate driverId={selectedDriverId} onUpdateDriverStatus={updateDriverStatus} />
         </Drawer>
-        {/* Thêm component DriverUpdate và truyền driverId vào nó */}
         <Drawer
           anchor="right"
           open={openDriverUpdate}
@@ -211,7 +227,7 @@ function DriverTable() {
           pageSize={pagination.pageSize}
           rowCount={pagination.totalRows}
           pagination
-          page={pagination.currentPage}
+          page={pagination.currentPage - 1}
           onPageChange={handlePageChange}
         />
       </div>

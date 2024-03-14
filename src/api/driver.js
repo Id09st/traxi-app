@@ -4,7 +4,7 @@ export const getAllDriver = (currentPage, pageSize) => {
   return axiosInstances.login
     .get(`/api/v1/get-all-drivers/${currentPage}/${pageSize}`)
     .then((response) => {
-      console.log('Dữ liệu nhận được:', response.data);
+
       const { listDrivers, error } = response.data;
       if (error) {
         console.error('Lỗi từ API:', error);
@@ -27,7 +27,6 @@ export const addDriver = async (driverData) => {
       Phone: driverData.phone,
       Address: driverData.address,
       Password: driverData.password,
-      DegreeId: driverData.degreeid,
       WalletId: driverData.walletid
     });
     return response.data;
@@ -40,7 +39,7 @@ export const addDriver = async (driverData) => {
 export const getDriverById = async (driverId) => {
   try {
     const response = await axiosInstances.login.get(`/api/v1/driver/${driverId}`);
-    console.log('Dữ liệu nhận được:', response.data);
+
     const { result, error } = response.data;
     if (error) {
       console.error('Lỗi từ API:', error);

@@ -12,6 +12,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import BlockIcon from '@mui/icons-material/Block';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { banManagerById, getManagerById, updateManagerById } from 'api/manager'; // Assuming you have API functions for getting, updating, and banning manager by ID
 
 export default function UpdateManager({ setIsOpen, managerId }) {
@@ -23,6 +24,7 @@ export default function UpdateManager({ setIsOpen, managerId }) {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false); // State for controlling confirmation dialog
+  const [isBanned, setIsBanned] = useState(false);
 
   useEffect(() => {
     getManagerData(managerId);
@@ -32,8 +34,7 @@ export default function UpdateManager({ setIsOpen, managerId }) {
     try {
       const data = await getManagerById(id);
       setManager({
-        name: data.Name,
-        password: data.Password
+        name: data.Name
       });
     } catch (error) {
       console.error('Error fetching manager data:', error);
@@ -72,6 +73,7 @@ export default function UpdateManager({ setIsOpen, managerId }) {
       setSnackbarSeverity('success');
       setOpenSnackbar(true);
       setIsOpen(false);
+      setIsBanned(true); // Cập nhật trạng thái quản lý đã bị ban
     } catch (error) {
       console.error('Có lỗi khi ban quản lý:', error);
       setSnackbarMessage('Có lỗi xảy ra khi ban quản lý');
@@ -94,7 +96,7 @@ export default function UpdateManager({ setIsOpen, managerId }) {
   return (
     <div style={{ padding: 20 }}>
       <Typography variant="h3" gutterBottom sx={{ padding: '16px 5px' }}>
-        Update Manager
+        Cập nhật thông tin Manager
       </Typography>
       <Box
         component="form"
@@ -107,21 +109,24 @@ export default function UpdateManager({ setIsOpen, managerId }) {
       >
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <TextField id="outlined-name" label="Name" value={manager.name} onChange={handleChange('name')} fullWidth />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField id="outlined-password" label="Password" value={manager.password} onChange={handleChange('password')} fullWidth />
+            <TextField id="outlined-name" label="Tên tài khoản" value={manager.name} onChange={handleChange('name')} fullWidth />
           </Grid>
         </Grid>
-        <Grid container spacing={2} style={{ marginTop: '20px' }}>
+        <Grid container spacing={2} style={{ marginTop: '20px' }} key={isBanned ? 'banned' : 'not-banned'}>
           <Grid item>
-            <Button type="button" color="error" variant="outlined" onClick={handleBan}>
-              <BlockIcon/>
-            </Button>
+            {isBanned ? (
+              <Button type="button" color="success" variant="outlined" disabled>
+                <CheckCircleOutlineIcon />
+              </Button>
+            ) : (
+              <Button type="button" color="error" variant="outlined" onClick={handleBan}>
+                <BlockIcon />
+              </Button>
+            )}
           </Grid>
           <Grid item>
             <Button type="submit" color="primary" variant="contained">
-              Update Manager
+              Cập nhật
             </Button>
           </Grid>
         </Grid>
@@ -131,9 +136,7 @@ export default function UpdateManager({ setIsOpen, managerId }) {
       <Dialog open={openConfirmDialog} onClose={handleCancelBan}>
         <DialogTitle>Bạn có muốn cấm tài khoản này?</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Thao tác này sẽ cấm tài khoản và không thể hoàn tác.
-          </DialogContentText>
+          <DialogContentText>Thao tác này sẽ cấm tài khoản và không thể hoàn tác.</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleConfirmBan} color="error">

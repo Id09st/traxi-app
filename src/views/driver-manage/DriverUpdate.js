@@ -26,7 +26,7 @@ export default function DriverUpdate({ driverId }) {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-  const [openConfirmDialog, setOpenConfirmDialog] = useState(false); // State for controlling confirmation dialog
+  const [openConfirm, setOpenConfirm] = useState(false);
   const [errors, setErrors] = useState({}); // Define errors state variable
 
   useEffect(() => {
@@ -37,13 +37,12 @@ export default function DriverUpdate({ driverId }) {
     try {
       const data = await getDriverById(id);
       setDriver({
-        Fullname: data.fullname,
-        Imageurl: data.imageurl,
-        Phone: data.phone,
-        Address: data.address,
-        Password: data.password,
-        Degreeid: data.degreeid,
-        Walletid: data.walletid
+        fullname: data.FullName,
+        imageurl: data.ImageUrl,
+        phone: data.Phone,
+        address: data.Address,
+        walletid: data.WalletId,
+        status: data.Status
       });
     } catch (error) {
       console.error('Error fetching driver data:', error);
@@ -70,26 +69,22 @@ export default function DriverUpdate({ driverId }) {
   };
 
   const handleBan = async () => {
-    setOpenConfirmDialog(true); // Open confirmation dialog
-  };
-
-  const handleConfirmBan = async () => {
-    setOpenConfirmDialog(false); // Close confirmation dialog
     try {
       await banDriverById(driverId);
-      setSnackbarMessage('Driver banned successfully');
+      // Gọi hàm được truyền qua props để cập nhật trạng thái
+      props.onUpdateDriverStatus(driverId, 'banned');
+      setOpenConfirm(false);
+      // Hiển thị thông báo thành công
+      setSnackbarMessage('Driver đã bị ban thành công.');
       setSnackbarSeverity('success');
       setOpenSnackbar(true);
     } catch (error) {
-      console.error('Error banning driver:', error);
-      setSnackbarMessage('Error banning driver');
+      console.error('Lỗi khi khóa tài khoản:', error);
+      // Hiển thị thông báo lỗi
+      setSnackbarMessage('Lỗi khi khóa tài khoản.');
       setSnackbarSeverity('error');
       setOpenSnackbar(true);
     }
-  };
-
-  const handleCancelBan = () => {
-    setOpenConfirmDialog(false); // Close confirmation dialog
   };
 
   const handleCloseSnackbar = (event, reason) => {
@@ -102,7 +97,7 @@ export default function DriverUpdate({ driverId }) {
   return (
     <div style={{ padding: 20 }}>
       <Typography variant="h3" gutterBottom sx={{ padding: '16px 5px' }}>
-        Update Driver
+        Chỉnh sửa hồ sơ Tài xế
       </Typography>
       <Box
         component="form"
@@ -118,7 +113,7 @@ export default function DriverUpdate({ driverId }) {
             <TextField
               error={errors.fullname}
               id="outlined-fullname"
-              label="Full Name"
+              label="Họ và tên"
               value={driver.fullname}
               onChange={handleChange('fullname')}
               fullWidth
@@ -138,7 +133,7 @@ export default function DriverUpdate({ driverId }) {
             <TextField
               error={errors.phone}
               id="outlined-phone"
-              label="Phone"
+              label="Số điện thoại"
               value={driver.phone}
               onChange={handleChange('phone')}
               fullWidth
@@ -148,29 +143,9 @@ export default function DriverUpdate({ driverId }) {
             <TextField
               error={errors.address}
               id="outlined-address"
-              label="Address"
+              label="Địa chỉ"
               value={driver.address}
               onChange={handleChange('address')}
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              error={errors.password}
-              id="foutlined-password"
-              label="Password"
-              value={driver.password}
-              onChange={handleChange('password')}
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              error={errors.degreeid}
-              id="outlined-degreeid"
-              label="Degree ID"
-              value={driver.degreeid}
-              onChange={handleChange('degreeid')}
               fullWidth
             />
           </Grid>
@@ -187,31 +162,33 @@ export default function DriverUpdate({ driverId }) {
         </Grid>
         <Grid container spacing={2} style={{ marginTop: '20px' }}>
           <Grid item>
-            <Button type="button" color="error" variant="outlined" onClick={handleBan}>
+            <Button type="button" color="error" variant="outlined" onClick={() => setOpenConfirm(true)}>
               <BlockIcon />
             </Button>
           </Grid>
           <Grid item>
             <Button type="submit" color="primary" variant="contained">
-              Update Driver
+              Cập nhật
             </Button>
           </Grid>
         </Grid>
       </Box>
 
-      {/* Confirmation Dialog */}
-      <Dialog open={openConfirmDialog} onClose={handleCancelBan}>
-        <DialogTitle>Are you sure you want to ban this driver?</DialogTitle>
+      <Dialog
+        open={openConfirm}
+        onClose={() => setOpenConfirm(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{'Xác nhận khóa tài khoản?'}</DialogTitle>
         <DialogContent>
-          <DialogContentText>This action will ban the driver and cannot be undone.</DialogContentText>
+          <DialogContentText id="alert-dialog-description">
+            Bạn có chắc chắn muốn khóa tài khoản này không? Hành động này không thể hoàn tác.
+          </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleConfirmBan} color="error">
-            Yes
-          </Button>
-          <Button onClick={handleCancelBan} color="primary" variant="contained">
-            No
-          </Button>
+          <Button onClick={() => setOpenConfirm(false)}>Không</Button>
+          <Button onClick={handleBan}>Có</Button>
         </DialogActions>
       </Dialog>
 
