@@ -1,1 +1,1 @@
-export const API_ROOT = 'https://traxi-web-admin-fe.vercel.app';
+export const API_ROOT = 'https://traxi-web-admin-be.vercel.app';
