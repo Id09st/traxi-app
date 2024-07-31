@@ -1,1 +1,1 @@
-export const API_ROOT = 'https://traxi.me';
+export const API_ROOT = 'https://traxi-product-admin-be.railway.internal';
